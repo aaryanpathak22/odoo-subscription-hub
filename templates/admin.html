@@ -37,7 +37,175 @@
             </div>
         </div>
 
+        <div class="col-md-4">
+    <div class="card custom-card p-4 h-100">
+        <h6 class="text-secondary">Revenue Received</h6>
+        <h3 class="fw-bold mb-0">
+            ₹{{ total_revenue }}
+        </h3>
     </div>
+</div>
+
+<div class="col-md-4">
+    <div class="card custom-card p-4 h-100">
+        <h6 class="text-secondary">Amount Owed</h6>
+        <h3 class="fw-bold mb-0">
+            ₹{{ amount_owed }}
+        </h3>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="card custom-card p-4 h-100">
+        <h6 class="text-secondary">Outstanding Invoices</h6>
+        <h3 class="fw-bold mb-0">
+            {{ outstanding_count }}
+        </h3>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="card custom-card p-4 h-100">
+        <h6 class="text-secondary">Overdue Invoices</h6>
+        <h3 class="fw-bold mb-0">
+            {{ overdue_count }}
+        </h3>
+    </div>
+</div>
+
+    </div>
+
+    <div class="row g-4 mt-1">
+
+    <!-- Add Product -->
+    <div class="col-lg-6">
+        <div class="card custom-card p-4 h-100">
+
+            <h5 class="fw-bold mb-3">Add Product</h5>
+
+            <form method="POST"
+                  action="{{ url_for('add_product') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Product Name</label>
+                    <input type="text"
+                           name="name"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Product Type</label>
+                    <input type="text"
+                           name="type"
+                           class="form-control"
+                           placeholder="Software / Service"
+                           required>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sales Price</label>
+                        <input type="number"
+                               name="sales_price"
+                               class="form-control"
+                               step="0.01"
+                               required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cost Price</label>
+                        <input type="number"
+                               name="cost_price"
+                               class="form-control"
+                               step="0.01"
+                               required>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes"
+                              class="form-control"
+                              rows="2"></textarea>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Add Product
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Add Plan -->
+    <div class="col-lg-6">
+        <div class="card custom-card p-4 h-100">
+
+            <h5 class="fw-bold mb-3">Add Subscription Plan</h5>
+
+            <form method="POST"
+                  action="{{ url_for('add_plan') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Plan Name</label>
+                    <input type="text"
+                           name="name"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Price</label>
+                    <input type="number"
+                           name="price"
+                           class="form-control"
+                           step="0.01"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Billing Frequency</label>
+
+                    <select name="billing_cycle"
+                            class="form-select"
+                            required>
+
+                        <option value="day">Daily</option>
+                        <option value="week">Weekly</option>
+                        <option value="month" selected>Monthly</option>
+                        <option value="year">Yearly</option>
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Minimum Quantity</label>
+
+                    <input type="number"
+                           name="minimum_quantity"
+                           class="form-control"
+                           value="1"
+                           min="1"
+                           required>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Add Plan
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
 
     <!-- Registered Customers -->
     <div class="card custom-card p-4 mt-4">
@@ -94,6 +262,116 @@
 
     </div>
 
+    <!-- Invoice Management -->
+<div class="card custom-card p-4 mt-4">
+
+    <h5 class="fw-bold mb-3">
+        All Invoices
+    </h5>
+
+    {% if invoices %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for invoice in invoices %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ invoice.customer_name }}
+                            </strong>
+
+                            {% if invoice.customer_email %}
+                                <br>
+                                <small class="text-secondary">
+                                    {{ invoice.customer_email }}
+                                </small>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ invoice.plan_name }}
+                        </td>
+
+                        <td>
+                            ₹{{ invoice.amount }}
+                        </td>
+
+                        <td>
+
+                            {% if invoice.status == "paid" %}
+
+                                <span class="badge bg-success">
+                                    Paid
+                                </span>
+
+                            {% elif invoice.status == "confirmed" %}
+
+                                <span class="badge bg-primary">
+                                    Confirmed
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {% if invoice.created_at %}
+                                {{ invoice.created_at.strftime('%d %b %Y') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if invoice.due_date %}
+                                {{ invoice.due_date.strftime('%d %b %Y') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <p class="text-secondary mb-0">
+            No invoices available.
+        </p>
+
+    {% endif %}
+
+</div>
 
     <!-- All Subscriptions -->
     <div class="card custom-card p-4 mt-4">

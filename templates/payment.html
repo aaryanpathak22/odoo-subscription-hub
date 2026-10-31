@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Record Payment | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="mb-4">
+                <h2 class="fw-bold">Record Payment</h2>
+                <p class="text-secondary">
+                    Complete payment for your subscription invoice.
+                </p>
+            </div>
+
+            <div class="card custom-card p-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-bold">{{ invoice.plan_name }}</h5>
+
+                    <p class="mb-1">
+                        <strong>Invoice Amount:</strong>
+                        ₹{{ invoice.amount }}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Status:</strong>
+                        <span class="badge bg-primary">Confirmed</span>
+                    </p>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('record_payment', invoice_id=invoice._id) }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Payment Method
+                        </label>
+
+                        <select name="payment_method"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select payment method</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Amount
+                        </label>
+
+                        <input type="number"
+                               name="amount"
+                               class="form-control"
+                               value="{{ invoice.amount }}"
+                               readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Payment Note
+                        </label>
+
+                        <textarea name="note"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Optional payment note"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-success">
+                        Record Payment
+                    </button>
+
+                    <a href="{{ url_for('invoices') }}"
+                       class="btn btn-outline-secondary ms-2">
+                        Cancel
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

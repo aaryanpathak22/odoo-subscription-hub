@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Invoices | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Invoices</h2>
+        <p class="text-secondary">
+            View and manage your subscription invoices.
+        </p>
+    </div>
+
+    <div class="card custom-card p-4">
+
+        {% if invoices %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Created On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for invoice in invoices %}
+
+                        <tr>
+
+                            <td>
+                                {{ invoice.plan_name }}
+                            </td>
+
+                            <td>
+                                ₹{{ invoice.amount }}
+                            </td>
+
+                            <td>
+                                {% if invoice.status == "paid" %}
+
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+
+                                {% elif invoice.status == "confirmed" %}
+
+                                    <a href="{{ url_for('pay_invoice', invoice_id=invoice._id) }}"
+                                       class="btn btn-sm btn-success">
+                                       Pay Now
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        Draft
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ invoice.created_at.strftime("%d %b %Y") }}
+                            </td>
+
+                            <td>
+
+                                {% if invoice.status == "draft" %}
+
+                                    <a href="{{ url_for('confirm_invoice', invoice_id=invoice._id) }}"
+                                       class="btn btn-sm btn-primary">
+                                        Confirm Invoice
+                                    </a>
+
+                                {% elif invoice.status == "confirmed" %}
+
+                                    <span class="text-secondary">
+                                        Awaiting Payment
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-success fw-semibold">
+                                        Payment Complete
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-secondary mb-0">
+                No invoices available yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
