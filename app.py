@@ -6,6 +6,7 @@ import re
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 
 # Load values from .env
@@ -103,7 +104,82 @@ def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    return render_template("dashboard.html")
+    subscription = db.subscriptions.find_one({
+        "user_id": session["user_id"],
+        "status": "active"
+    })
+
+    return render_template(
+        "dashboard.html",
+        subscription=subscription
+    )
+
+@app.route("/products")
+def products():
+    product_list = list(db.products.find({"status": "active"}))
+
+    return render_template(
+        "products.html",
+        products=product_list
+    )
+
+@app.route("/plans")
+def plans():
+    plan_list = list(db.plans.find({"status": "active"}))
+
+    return render_template(
+        "plans.html",
+        plans=plan_list
+    )
+
+
+@app.route("/subscribe/<plan_id>")
+def subscribe(plan_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    plan = db.plans.find_one({"_id": ObjectId(plan_id)})
+
+    if not plan:
+        return redirect(url_for("plans"))
+    db.subscriptions.update_many(
+    {
+        "user_id": session["user_id"],
+        "status": "active"
+    },
+    {
+        "$set": {"status": "cancelled"}
+    }
+)
+    subscription = {
+        "user_id": session["user_id"],
+        "plan_id": str(plan["_id"]),
+        "plan_name": plan["name"],
+        "price": plan["price"],
+        "billing_cycle": plan["billing_cycle"],
+        "status": "active"
+    }
+
+    db.subscriptions.insert_one(subscription)
+
+    return redirect(url_for("dashboard"))
+
+@app.route("/cancel-subscription")
+def cancel_subscription():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db.subscriptions.update_one(
+        {
+            "user_id": session["user_id"],
+            "status": "active"
+        },
+        {
+            "$set": {"status": "cancelled"}
+        }
+    )
+
+    return redirect(url_for("dashboard"))
 
 if __name__ == "__main__":
     app.run(debug=True)

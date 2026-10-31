@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Plans | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Choose Your Plan</h2>
+            <p class="text-secondary">
+                Simple subscription plans for every need.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            {% for plan in plans %}
+
+            <div class="col-md-4">
+                <div class="card custom-card h-100 p-3">
+                    <div class="card-body text-center">
+
+                        <h4 class="fw-bold">{{ plan.name }}</h4>
+
+                        <h2 class="fw-bold my-3">
+                            ₹{{ plan.price }}
+                            <small class="fs-6 text-secondary">
+                                / {{ plan.billing_cycle }}
+                            </small>
+                        </h2>
+
+                        <p class="text-secondary">
+                            {{ plan.description }}
+                        </p>
+
+                        <a href="{{ url_for('subscribe', plan_id=plan._id) }}"
+                            class="btn btn-primary w-100 mt-3">
+                            Choose Plan
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <p class="text-center text-secondary">
+                No subscription plans available.
+            </p>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
