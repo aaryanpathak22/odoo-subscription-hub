@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card custom-card p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Create your account</h2>
+                    <p class="text-secondary">
+                        Start managing your subscriptions today.
+                    </p>
+                </div>
+
+                {% if error %}
+                <div class="alert alert-danger">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text"
+                               name="name"
+                               class="form-control"
+                               placeholder="Enter your name"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="you@example.com"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Create a password"
+                               required>
+
+                        <div class="form-text">
+                            More than 8 characters with uppercase,
+                            lowercase and a special character.
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-dark w-100 py-2">
+                        Create Account
+                    </button>
+
+                </form>
+
+                <p class="text-center text-secondary mt-4 mb-0">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}" style="color:#714b67;">Login</a>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

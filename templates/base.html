@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Subscription Hub{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Our CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-arrow-repeat me-2"></i>
+            Subscription Hub
+        </a>
+
+        <div class="navbar-nav ms-auto align-items-lg-center">
+
+    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+    <a class="nav-link" href="#">Products</a>
+    <a class="nav-link" href="#">Plans</a>
+
+    {% if session.get("user_id") %}
+
+    <a class="nav-link" href="{{ url_for('dashboard') }}">
+        Dashboard
+    </a>
+
+        <span class="nav-link text-white">
+            <i class="bi bi-person-circle me-1"></i>
+            {{ session.get("user_name") }}
+        </span>
+
+        <a class="nav-link"
+           href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    {% else %}
+
+        <a class="nav-link"
+           href="{{ url_for('login') }}">
+            Login
+        </a>
+
+    {% endif %}
+
+</div>
+
+    </div>
+</nav>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+
+<footer class="app-footer">
+    <div class="container">
+        <p class="mb-0">Subscription Hub • Subscription Management Made Simple</p>
+    </div>
+</footer>
+
+</body>
+</html>

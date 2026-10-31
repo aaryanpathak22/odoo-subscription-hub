@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">
+            Welcome, {{ session.get("user_name") }}
+        </h2>
+
+        <p class="text-secondary">
+            Manage your subscriptions from your dashboard.
+        </p>
+    </div>
+
+    <div class="card custom-card p-4">
+        <h5>Account Information</h5>
+
+        <p class="mb-1">
+            <strong>Name:</strong>
+            {{ session.get("user_name") }}
+        </p>
+
+        <p class="mb-0">
+            <strong>Role:</strong>
+            {{ session.get("role") | capitalize }}
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

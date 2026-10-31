@@ -1,0 +1,38 @@
+body {
+    background-color: #f6f7fb;
+    color: #212529;
+    min-height: 100vh;
+}
+
+.custom-navbar {
+    background: linear-gradient(135deg, #563d7c, #714b67);
+    padding: 14px 0;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+}
+
+.nav-link {
+    margin-left: 15px;
+}
+
+.app-footer {
+    margin-top: 70px;
+    padding: 25px 0;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #e7e7e7;
+    background-color: white;
+}
+
+.page-title {
+    font-weight: 700;
+    color: #2f2f2f;
+}
+
+.custom-card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
