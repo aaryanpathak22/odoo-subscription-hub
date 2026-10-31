@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Subscription Hub{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Admin Dashboard</h2>
+        <p class="text-secondary">
+            Overview of customers and subscriptions.
+        </p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4 text-center">
+                <h3 class="fw-bold">{{ total_users }}</h3>
+                <p class="text-secondary mb-0">Total Customers</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4 text-center">
+                <h3 class="fw-bold">{{ active_subscriptions }}</h3>
+                <p class="text-secondary mb-0">Active Subscriptions</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4 text-center">
+                <h3 class="fw-bold">{{ total_plans }}</h3>
+                <p class="text-secondary mb-0">Available Plans</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Registered Customers -->
+    <div class="card custom-card p-4 mt-4">
+
+        <h5 class="fw-bold mb-3">
+            Registered Customers
+        </h5>
+
+        {% if customers %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for customer in customers %}
+
+                        <tr>
+                            <td>{{ customer.name }}</td>
+
+                            <td>{{ customer.email }}</td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ customer.role | capitalize }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-secondary mb-0">
+                No customers registered yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- All Subscriptions -->
+    <div class="card custom-card p-4 mt-4">
+
+        <h5 class="fw-bold mb-3">
+            All Subscriptions
+        </h5>
+
+        {% if subscriptions %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Plan</th>
+                            <th>Price</th>
+                            <th>Billing Cycle</th>
+                            <th>Status</th>
+                            <th>Started On</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in subscriptions %}
+
+                        <tr>
+
+                            <!-- Customer -->
+                            <td>
+                                {% if item.user_name %}
+                                    <strong>
+                                        {{ item.user_name }}
+                                    </strong>
+
+                                    {% if item.user_email %}
+                                        <br>
+                                        <small class="text-secondary">
+                                            {{ item.user_email }}
+                                        </small>
+                                    {% endif %}
+
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <!-- Plan -->
+                            <td>
+                                {{ item.plan_name }}
+                            </td>
+
+                            <!-- Price -->
+                            <td>
+                                ₹{{ item.price }}
+                            </td>
+
+                            <!-- Billing Cycle -->
+                            <td>
+                                {{ item.billing_cycle | capitalize }}
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                {% if item.status == "active" %}
+
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        Cancelled
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+                            <!-- Started On -->
+                            <td>
+                                {% if item.created_at %}
+                                    {{ item.created_at.strftime("%d %b %Y") }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-secondary mb-0">
+                No subscriptions available.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

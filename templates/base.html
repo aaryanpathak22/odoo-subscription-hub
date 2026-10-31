@@ -40,6 +40,13 @@
         Dashboard
     </a>
 
+
+    {% if session.get("role") == "admin" %}
+        <a class="nav-link" href="{{ url_for('admin') }}">
+            Admin
+        </a>
+    {% endif %}
+
         <span class="nav-link text-white">
             <i class="bi bi-person-circle me-1"></i>
             {{ session.get("user_name") }}

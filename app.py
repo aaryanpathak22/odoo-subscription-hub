@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-
+from datetime import datetime
 
 # Load values from .env
 load_dotenv()
@@ -88,6 +88,7 @@ def login():
 
         session["user_id"] = str(user["_id"])
         session["user_name"] = user["name"]
+        session["user_email"] = user["email"]
         session["role"] = user["role"]
 
         return redirect(url_for("dashboard"))
@@ -109,9 +110,16 @@ def dashboard():
         "status": "active"
     })
 
+    subscription_history = list(
+        db.subscriptions.find({
+            "user_id": session["user_id"]
+        }).sort("_id", -1)
+    )
+
     return render_template(
         "dashboard.html",
-        subscription=subscription
+        subscription=subscription,
+        subscription_history=subscription_history
     )
 
 @app.route("/products")
@@ -152,13 +160,16 @@ def subscribe(plan_id):
     }
 )
     subscription = {
-        "user_id": session["user_id"],
-        "plan_id": str(plan["_id"]),
-        "plan_name": plan["name"],
-        "price": plan["price"],
-        "billing_cycle": plan["billing_cycle"],
-        "status": "active"
-    }
+    "user_id": session["user_id"],
+    "user_name": session["user_name"],
+    "user_email": session.get("user_email", ""),
+    "plan_id": str(plan["_id"]),
+    "plan_name": plan["name"],
+    "price": plan["price"],
+    "billing_cycle": plan["billing_cycle"],
+    "status": "active",
+    "created_at": datetime.now()
+}
 
     db.subscriptions.insert_one(subscription)
 
@@ -180,6 +191,44 @@ def cancel_subscription():
     )
 
     return redirect(url_for("dashboard"))
+
+@app.route("/admin")
+def admin():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    if session.get("role") != "admin":
+        return redirect(url_for("dashboard"))
+
+    total_users = db.users.count_documents({
+        "role": "customer"
+    })
+
+    active_subscriptions = db.subscriptions.count_documents({
+        "status": "active"
+    })
+
+    total_plans = db.plans.count_documents({
+        "status": "active"
+    })
+
+    customer_list = list(
+        db.users.find(
+            {"role": "customer"},
+            {"password": 0}
+        )
+    )
+    subscriptions = list(
+        db.subscriptions.find().sort("created_at", -1)
+ )
+    return render_template(
+        "admin.html",
+        total_users=total_users,
+        active_subscriptions=active_subscriptions,
+        total_plans=total_plans,
+        customers=customer_list,
+        subscriptions=subscriptions
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

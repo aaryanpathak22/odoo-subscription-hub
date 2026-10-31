@@ -16,6 +16,7 @@
         </p>
     </div>
 
+    <!-- Account Information -->
     <div class="card custom-card p-4">
         <h5>Account Information</h5>
 
@@ -30,12 +31,15 @@
         </p>
     </div>
 
+    <!-- Current Subscription -->
     <div class="card custom-card p-4 mt-4">
         <h5 class="fw-bold">My Subscription</h5>
 
         {% if subscription %}
 
-            <h4 class="mt-3">{{ subscription.plan_name }}</h4>
+            <h4 class="mt-3">
+                {{ subscription.plan_name }}
+            </h4>
 
             <p class="mb-1">
                 <strong>Price:</strong>
@@ -44,10 +48,12 @@
 
             <p class="mb-0">
                 <strong>Status:</strong>
+
                 <span class="badge bg-success">
                     {{ subscription.status | capitalize }}
                 </span>
             </p>
+
             <a href="{{ url_for('cancel_subscription') }}"
                class="btn btn-outline-danger mt-3">
                 Cancel Subscription
@@ -59,11 +65,99 @@
                 You don't have an active subscription yet.
             </p>
 
-            <a href="{{ url_for('plans') }}" class="btn btn-primary">
+            <a href="{{ url_for('plans') }}"
+               class="btn btn-primary">
                 Browse Plans
             </a>
 
         {% endif %}
+    </div>
+
+    <!-- Subscription History -->
+    <div class="card custom-card p-4 mt-4">
+
+        <h5 class="fw-bold mb-3">
+            Subscription History
+        </h5>
+
+        {% if subscription_history %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Price</th>
+                            <th>Billing Cycle</th>
+                            <th>Started On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in subscription_history %}
+
+                        <tr>
+
+                            <td>
+                                {{ item.plan_name }}
+                            </td>
+
+                            <td>
+                                ₹{{ item.price }}
+                            </td>
+
+                            <td>
+                                {{ item.billing_cycle | capitalize }}
+                            </td>
+
+                            <td>
+                                {% if item.created_at %}
+                                    {{ item.created_at.strftime('%d %b %Y') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+
+                                {% if item.status == "active" %}
+
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        Cancelled
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-secondary mb-0">
+                No subscription history available.
+            </p>
+
+        {% endif %}
+
     </div>
 
 </div>
