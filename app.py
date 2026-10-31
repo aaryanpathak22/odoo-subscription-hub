@@ -296,6 +296,13 @@ def admin():
         )
     )
 
+    staff_members = list(
+    db.users.find(
+        {"role": "staff"},
+        {"password": 0}
+    )
+)
+
     subscriptions = list(
         db.subscriptions.find().sort(
             "created_at",
@@ -320,6 +327,7 @@ def admin():
     outstanding_count=outstanding_count,
     overdue_count=overdue_count,
     customers=customers,
+    staff_members=staff_members,
     subscriptions=subscriptions,
     invoices=invoice_list
 )
@@ -501,7 +509,39 @@ def add_plan():
 
     return redirect(url_for("admin"))
 
+@app.route("/admin/add-staff", methods=["POST"])
+def add_staff():
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
 
+    name = request.form.get("name", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    password = request.form.get("password", "")
+
+    if db.users.find_one({"email": email}):
+        return redirect(url_for("admin"))
+
+    if len(password) <= 8:
+        return redirect(url_for("admin"))
+
+    if (
+        not re.search(r"[A-Z]", password)
+        or not re.search(r"[a-z]", password)
+        or not re.search(r"[^A-Za-z0-9]", password)
+    ):
+        return redirect(url_for("admin"))
+
+    staff = {
+        "name": name,
+        "email": email,
+        "password": generate_password_hash(password),
+        "role": "staff",
+        "created_at": datetime.now()
+    }
+
+    db.users.insert_one(staff)
+
+    return redirect(url_for("admin"))
 
 if __name__ == "__main__":
     app.run(debug=True)
